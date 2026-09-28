@@ -1,0 +1,30 @@
+:root {
+  --td-page-top-inset: 24px;
+  --td-page-max-width: 64rem;
+  --td-radius-md: 0.5rem;
+  --td-radius-lg: 1rem;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+html,
+body {
+  overflow: hidden;
+}
+
+.tdhls-app {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+}
+
+.main-scroller {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}

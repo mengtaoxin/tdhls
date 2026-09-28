@@ -4,7 +4,8 @@ import userEvent from '@testing-library/user-event';
 
 import { WatchPage } from '@/components/WatchPage';
 import { useHlsPlayer } from '@/hooks/useHlsPlayer';
-import { LIVE_DELAY_KEY } from '@/lib/hls/playerPrefs';
+import { LIVE_DELAY_KEY, resolvePlayerPrefs } from '@/lib/hls/playerPrefs';
+import { usePlayerPrefsStore } from '@/stores/playerPrefs';
 import { renderWithTestRouter } from '@/__tests__/renderWithProviders';
 
 vi.mock('@/hooks/useHlsPlayer', () => ({ useHlsPlayer: vi.fn() }));
@@ -125,14 +126,18 @@ describe('WatchPage', () => {
     expect(screen.getByRole('button', { name: 'Play' })).toBeInTheDocument();
   });
 
-  it('changes and persists the live delay, and seeks back to live on demand', async () => {
+  it('plays live with the delay from settings and seeks back to live on demand', async () => {
     const user = userEvent.setup();
+    localStorage.setItem(LIVE_DELAY_KEY, '30');
+    usePlayerPrefsStore.setState(resolvePlayerPrefs());
     const player = mockPlayer({ isLive: true, latency: 90 });
     await renderWatch();
 
-    await user.click(screen.getByRole('button', { name: '30s' }));
-    expect(localStorage.getItem(LIVE_DELAY_KEY)).toBe('30');
     expect(useHlsPlayerMock).toHaveBeenLastCalledWith(expect.anything(), STREAM, 30);
+    expect(screen.queryByRole('button', { name: '30s' })).not.toBeInTheDocument();
+
+    act(() => usePlayerPrefsStore.getState().setLiveDelay(10));
+    expect(useHlsPlayerMock).toHaveBeenLastCalledWith(expect.anything(), STREAM, 10);
 
     await user.click(screen.getByRole('button', { name: 'Back to live' }));
     expect(player.seekToLiveSync).toHaveBeenCalledTimes(1);

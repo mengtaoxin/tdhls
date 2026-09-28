@@ -10,6 +10,7 @@ import Typography from '@mui/material/Typography';
 import TranslateIcon from '@mui/icons-material/Translate';
 import { useTranslation } from 'react-i18next';
 
+import { SettingsMenu } from '@/components/SettingsMenu';
 import { SUPPORTED_LOCALES } from '@/lib/locale';
 import { useLocaleStore } from '@/stores/locale';
 
@@ -77,6 +78,7 @@ export function AppHeader() {
             </MenuItem>
           ))}
         </Menu>
+        <SettingsMenu />
       </Toolbar>
     </AppBar>
   );

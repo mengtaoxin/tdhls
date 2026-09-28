@@ -23,8 +23,6 @@ export default {
     player: '视频播放器',
     live: '直播',
     latency: '落后直播 {seconds} 秒',
-    delayLabel: '延迟',
-    delayOption: '{seconds} 秒',
     backToLive: '回到直播',
     controls: {
       play: '播放',
@@ -42,6 +40,11 @@ export default {
       media: '视频流无法解码。',
       unsupported: '此浏览器不支持播放 HLS 视频流。',
     },
+  },
+  settings: {
+    title: '设置',
+    liveDelay: '直播延迟',
+    liveDelayOption: '{seconds} 秒',
   },
   about: {
     github: 'GitHub 仓库',

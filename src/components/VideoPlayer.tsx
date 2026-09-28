@@ -15,8 +15,6 @@ export function VideoPlayer({ url }: { url: string }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const liveDelaySec = usePlayerPrefsStore((s) => s.liveDelaySec);
-  const setLiveDelay = usePlayerPrefsStore((s) => s.setLiveDelay);
-
   const player = useHlsPlayer(videoRef, url, liveDelaySec);
   const controls = useVideoControls(videoRef, containerRef);
   const autoHide = useAutoHideControls(controls.isFullscreen);
@@ -89,7 +87,6 @@ export function VideoPlayer({ url }: { url: string }) {
             isLive={player.isLive}
             latency={player.latency}
             liveDelaySec={liveDelaySec}
-            onLiveDelayChange={setLiveDelay}
             onBackToLive={player.seekToLiveSync}
           />
         </Box>

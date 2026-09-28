@@ -3,8 +3,6 @@ import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import IconButton from '@mui/material/IconButton';
 import Slider from '@mui/material/Slider';
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
@@ -17,7 +15,7 @@ import { useTranslation } from 'react-i18next';
 
 import type { VideoControls } from '@/hooks/useVideoControls';
 import { formatTime } from '@/lib/hls/formatTime';
-import { LIVE_DELAY_OPTIONS, isLiveDelay, type LiveDelay } from '@/lib/hls/playerPrefs';
+import type { LiveDelay } from '@/lib/hls/playerPrefs';
 
 /** How far past the chosen delay playback may drift before offering "Back to live". */
 const BACK_TO_LIVE_MARGIN_SEC = 10;
@@ -27,7 +25,6 @@ export type PlayerControlsProps = {
   isLive: boolean;
   latency: number | null;
   liveDelaySec: LiveDelay;
-  onLiveDelayChange: (value: LiveDelay) => void;
   onBackToLive: () => void;
 };
 
@@ -43,7 +40,6 @@ export function PlayerControls({
   isLive,
   latency,
   liveDelaySec,
-  onLiveDelayChange,
   onBackToLive,
 }: PlayerControlsProps) {
   const { t } = useTranslation();
@@ -116,24 +112,6 @@ export function PlayerControls({
       )}
 
       <Box sx={{ flex: 1 }} />
-
-      {isLive && (
-        <ToggleButtonGroup
-          exclusive
-          size="small"
-          value={liveDelaySec}
-          aria-label={t('watch.delayLabel')}
-          onChange={(_event, value: unknown) => {
-            if (typeof value === 'number' && isLiveDelay(value)) onLiveDelayChange(value);
-          }}
-        >
-          {LIVE_DELAY_OPTIONS.map((option) => (
-            <ToggleButton key={option} value={option}>
-              {t('watch.delayOption', { seconds: option })}
-            </ToggleButton>
-          ))}
-        </ToggleButtonGroup>
-      )}
 
       <IconButton
         aria-label={

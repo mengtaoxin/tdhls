@@ -29,7 +29,6 @@ function renderControls(props: Partial<PlayerControlsProps> = {}) {
     isLive: false,
     latency: null,
     liveDelaySec: 60,
-    onLiveDelayChange: vi.fn(),
     onBackToLive: vi.fn(),
     ...props,
   };
@@ -77,17 +76,15 @@ describe('PlayerControls', () => {
     expect(controls.seek).toHaveBeenCalledWith(42);
   });
 
-  it('shows the live badge, latency, and delay choice for live streams', async () => {
-    const user = userEvent.setup();
-    const props = renderControls({ isLive: true, latency: 62 });
+  it('shows the live badge and latency without a delay picker for live streams', () => {
+    renderControls({ isLive: true, latency: 62 });
 
     expect(screen.getByText('LIVE')).toBeInTheDocument();
     expect(screen.getByText('62s behind live')).toBeInTheDocument();
     expect(screen.queryByRole('slider', { name: 'Seek' })).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '60s' })).toHaveAttribute('aria-pressed', 'true');
-
-    await user.click(screen.getByRole('button', { name: '10s' }));
-    expect(props.onLiveDelayChange).toHaveBeenCalledWith(10);
+    for (const name of ['10s', '30s', '60s']) {
+      expect(screen.queryByRole('button', { name })).not.toBeInTheDocument();
+    }
   });
 
   it('offers Back to live only when well behind the chosen delay', async () => {

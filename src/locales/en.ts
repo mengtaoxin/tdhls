@@ -21,8 +21,6 @@ export default {
     player: 'Video player',
     live: 'LIVE',
     latency: '{seconds}s behind live',
-    delayLabel: 'Delay',
-    delayOption: '{seconds}s',
     backToLive: 'Back to live',
     controls: {
       play: 'Play',
@@ -40,6 +38,11 @@ export default {
       media: 'The stream could not be decoded.',
       unsupported: 'This browser cannot play HLS streams.',
     },
+  },
+  settings: {
+    title: 'Settings',
+    liveDelay: 'Live delay',
+    liveDelayOption: '{seconds}s',
   },
   about: {
     github: 'GitHub repository',

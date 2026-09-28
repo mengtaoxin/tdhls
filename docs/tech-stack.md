@@ -27,7 +27,7 @@ Prefer MUI components and theme/`sx`; use `src/styles/` for global tweaks. No Vu
 
 `/watch` plays the stream URL passed in router history state (not the query), so it survives a reload but a bare `/watch` link shows an invalid-URL error. `src/lib/hls/player.ts` (`attachStream`) uses hls.js (MSE) where `Hls.isSupported()`. It falls back to native `<video src>` on Safari / iOS where `video.canPlayType('application/vnd.apple.mpegurl')` is truthy, and otherwise reports "unsupported". Streams are fetched directly from their origin, so they must send CORS headers.
 
-**Live delay and buffer.** The user picks a delay of 10, 30, or 60 seconds (default 60, stored as `tdhls.liveDelay`). `src/lib/hls/hlsConfig.ts` maps it to hls.js settings:
+**Live delay and buffer.** The user picks a delay of 10, 30, or 60 seconds in the header settings menu (`SettingsMenu`; default 60, stored as `tdhls.liveDelay`). The player page has no delay picker. `src/lib/hls/hlsConfig.ts` maps it to hls.js settings:
 
 | Setting                   | Value                | Why                                                    |
 | ------------------------- | -------------------- | ------------------------------------------------------ |
@@ -43,7 +43,7 @@ On native HLS, the player seeks to `seekable.end - delay` (clamped to `seekable.
 
 **Pause on live.** Pausing keeps the playhead, so resuming continues from the same spot with a larger delay, even after that spot has slid out of the playlist window, as long as it is still buffered. Only when the paused position is neither in the window (`currentTime < seekable.start`) nor buffered does the player seek to the delayed live point on `play`. The control bar shows "Back to live" once latency exceeds the delay by more than 10 seconds.
 
-**Controls.** The `<video>` has no native controls. `PlayerControls` gives play/pause, mute, volume (stored as `tdhls.volume` / `tdhls.muted`), a seek bar for VOD, the live badge with latency, the delay picker, and fullscreen. With the player focused, Space toggles play and M toggles mute. In fullscreen the controls overlay the video and hide (with the cursor) after 10 seconds without activity; moving the pointer, clicking, or pressing a key on the player shows them again and restarts the timer. If the browser blocks autoplay, the video stays paused until the user presses play.
+**Controls.** The `<video>` has no native controls. `PlayerControls` gives play/pause, mute, volume (stored as `tdhls.volume` / `tdhls.muted`), a seek bar for VOD, the live badge with latency, and fullscreen. With the player focused, Space toggles play and M toggles mute. In fullscreen the controls overlay the video and hide (with the cursor) after 10 seconds without activity; moving the pointer, clicking, or pressing a key on the player shows them again and restarts the timer. If the browser blocks autoplay, the video stays paused until the user presses play.
 
 ## PWA
 

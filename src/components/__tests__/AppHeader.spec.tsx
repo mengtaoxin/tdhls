@@ -19,4 +19,10 @@ describe('AppHeader', () => {
     expect(await screen.findByRole('link', { name: '首页' })).toBeInTheDocument();
     expect(localStorage.getItem(LOCALE_KEY)).toBe('zh');
   });
+
+  it('offers the settings menu', async () => {
+    await renderWithTestRouter({ component: AppHeader });
+
+    expect(screen.getByRole('button', { name: 'Settings' })).toBeInTheDocument();
+  });
 });

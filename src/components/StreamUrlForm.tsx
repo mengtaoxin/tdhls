@@ -1,5 +1,4 @@
 import { useState, type FormEvent } from 'react';
-import { useNavigate } from '@tanstack/react-router';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
@@ -8,9 +7,8 @@ import { useTranslation } from 'react-i18next';
 
 import { parseStreamUrl } from '@/lib/hls/streamUrl';
 
-export function StreamUrlForm() {
+export function StreamUrlForm({ onPlay }: { onPlay: (url: string) => void }) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const [value, setValue] = useState('');
   const [invalid, setInvalid] = useState(false);
 
@@ -21,7 +19,7 @@ export function StreamUrlForm() {
       setInvalid(true);
       return;
     }
-    void navigate({ to: '/watch', search: { url } });
+    onPlay(url);
   };
 
   return (

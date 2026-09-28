@@ -1,11 +1,21 @@
+import { useNavigate } from '@tanstack/react-router';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import { useTranslation } from 'react-i18next';
 
+import { StreamHistoryList } from '@/components/StreamHistoryList';
 import { StreamUrlForm } from '@/components/StreamUrlForm';
+import { useStreamHistory } from '@/hooks/useStreamHistory';
 
 export function HomePage() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { history, add, remove } = useStreamHistory();
+
+  const play = (url: string) => {
+    add(url);
+    void navigate({ to: '/watch', state: { streamUrl: url } });
+  };
 
   return (
     <Container
@@ -17,7 +27,8 @@ export function HomePage() {
       <Typography color="text.secondary" sx={{ mb: 3 }}>
         {t('home.lead')}
       </Typography>
-      <StreamUrlForm />
+      <StreamUrlForm onPlay={play} />
+      <StreamHistoryList history={history} onPlay={play} onRemove={remove} />
     </Container>
   );
 }

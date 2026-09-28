@@ -10,6 +10,11 @@ export default {
     urlLabel: 'Stream URL (.m3u8)',
     play: 'Play',
     invalidUrl: 'Enter a full http:// or https:// URL.',
+    history: {
+      title: 'Recent streams',
+      play: 'Play {url}',
+      remove: 'Remove {url}',
+    },
   },
   watch: {
     back: 'Back to home',

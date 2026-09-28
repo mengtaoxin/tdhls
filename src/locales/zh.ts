@@ -12,6 +12,11 @@ export default {
     urlLabel: '视频流地址（.m3u8）',
     play: '播放',
     invalidUrl: '请输入完整的 http:// 或 https:// 地址。',
+    history: {
+      title: '最近播放',
+      play: '播放 {url}',
+      remove: '删除 {url}',
+    },
   },
   watch: {
     back: '返回首页',

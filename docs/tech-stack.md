@@ -25,7 +25,7 @@ Prefer MUI components and theme/`sx`; use `src/styles/` for global tweaks. No Vu
 
 ## HLS
 
-`/watch?url=<m3u8>` plays the stream. `src/lib/hls/player.ts` (`attachStream`) uses hls.js (MSE) where `Hls.isSupported()`. It falls back to native `<video src>` on Safari / iOS where `video.canPlayType('application/vnd.apple.mpegurl')` is truthy, and otherwise reports "unsupported". Streams are fetched directly from their origin, so they must send CORS headers.
+`/watch` plays the stream URL passed in router history state (not the query), so it survives a reload but a bare `/watch` link shows an invalid-URL error. `src/lib/hls/player.ts` (`attachStream`) uses hls.js (MSE) where `Hls.isSupported()`. It falls back to native `<video src>` on Safari / iOS where `video.canPlayType('application/vnd.apple.mpegurl')` is truthy, and otherwise reports "unsupported". Streams are fetched directly from their origin, so they must send CORS headers.
 
 **Live delay and buffer.** The user picks a delay of 10, 30, or 60 seconds (default 60, stored as `tdhls.liveDelay`). `src/lib/hls/hlsConfig.ts` maps it to hls.js settings:
 

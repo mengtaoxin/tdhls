@@ -1,7 +1,8 @@
-import Alert from '@mui/material/Alert';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import { useTranslation } from 'react-i18next';
+
+import { StreamUrlForm } from '@/components/StreamUrlForm';
 
 export function HomePage() {
   const { t } = useTranslation();
@@ -16,7 +17,7 @@ export function HomePage() {
       <Typography color="text.secondary" sx={{ mb: 3 }}>
         {t('home.lead')}
       </Typography>
-      <Alert severity="info">{t('home.comingSoon')}</Alert>
+      <StreamUrlForm />
     </Container>
   );
 }

@@ -1,6 +1,6 @@
 # tdhls
 
-Personal HLS player SPA: paste an `.m3u8` URL and watch in the browser. Static deploy only — no backend. Playback is not implemented yet; the repo currently holds the app shell, tooling, and docs.
+Personal HLS player SPA: paste an `.m3u8` URL and watch in the browser (VOD and live, with a configurable delay behind the live edge). Static deploy only — no backend.
 
 ## Rules
 

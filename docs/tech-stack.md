@@ -13,7 +13,7 @@ tdhls is a React SPA (Vite) at the repo root — no separate `api/` or `web/` ap
 | State         | Zustand                                         |
 | i18n          | react-i18next (en default, zh)                  |
 | UI            | MUI 9 + Emotion + Material Icons                |
-| HLS           | hls.js (installed; playback not wired up yet)   |
+| HLS           | hls.js (MSE) with native HLS fallback           |
 | Lint / format | oxlint + oxfmt (`@mengtaoxin/oxc-config`)       |
 | Unit tests    | Vitest + Testing Library + happy-dom            |
 | Coverage      | `@vitest/coverage-v8` (`npm run test:coverage`) |
@@ -25,7 +25,23 @@ Prefer MUI components and theme/`sx`; use `src/styles/` for global tweaks. No Vu
 
 ## HLS
 
-Plan: use hls.js (MSE) where `Hls.isSupported()`, and fall back to native `<video src>` playback on Safari / iOS where `video.canPlayType('application/vnd.apple.mpegurl')` is truthy. Streams are fetched directly from their origin, so they must send CORS headers.
+`/watch?url=<m3u8>` plays the stream. `src/lib/hls/player.ts` (`attachStream`) uses hls.js (MSE) where `Hls.isSupported()`. It falls back to native `<video src>` on Safari / iOS where `video.canPlayType('application/vnd.apple.mpegurl')` is truthy, and otherwise reports "unsupported". Streams are fetched directly from their origin, so they must send CORS headers.
+
+**Live delay and buffer.** The user picks a delay of 10, 30, or 60 seconds (default 60, stored as `tdhls.liveDelay`). `src/lib/hls/hlsConfig.ts` maps it to hls.js settings:
+
+| Setting                   | Value                | Why                                                    |
+| ------------------------- | -------------------- | ------------------------------------------------------ |
+| `liveSyncDuration`        | delay                | Start (and "Back to live") this far behind the edge    |
+| `liveMaxLatencyDuration`  | 24h                  | Never auto-jump forward while paused inside the window |
+| `maxLiveSyncPlaybackRate` | 1                    | Never speed up to catch up                             |
+| `maxBufferLength`         | `max(30, delay)`     | Forward buffer roughly equals the delay on live        |
+| `maxMaxBufferLength`      | `max(60, 2 * delay)` | Upper bound for the forward buffer                     |
+
+On native HLS, the player seeks to `seekable.end - delay` (clamped to `seekable.start`) on `loadedmetadata` when `duration` is `Infinity`. If the playlist window is shorter than the delay, playback starts at the oldest available segment. The effective delay is then the window length, and this is not an error. Changing the delay re-attaches the player.
+
+**Pause on live.** Pausing keeps the playhead, so resuming continues from the same spot with a larger delay. If the paused position has slid out of the playlist window (`currentTime < seekable.start`), the player seeks to the delayed live point on `play`. The control bar shows "Back to live" once latency exceeds the delay by more than 10 seconds.
+
+**Controls.** The `<video>` has no native controls. `PlayerControls` gives play/pause, mute, volume (stored as `tdhls.volume` / `tdhls.muted`), a seek bar for VOD, the live badge with latency, the delay picker, and fullscreen. With the player focused, Space toggles play and M toggles mute. If the browser blocks autoplay, the video stays paused until the user presses play.
 
 ## PWA
 

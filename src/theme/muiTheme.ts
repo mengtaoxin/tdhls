@@ -48,6 +48,13 @@ export const muiTheme = createTheme({
         },
       },
     },
+    MuiToggleButton: {
+      styleOverrides: {
+        root: {
+          textTransform: 'none',
+        },
+      },
+    },
   },
   layout: {
     pageMaxWidth: '64rem',

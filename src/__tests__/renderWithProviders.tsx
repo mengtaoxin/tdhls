@@ -12,7 +12,7 @@ import {
 
 import { muiTheme } from '@/theme/muiTheme';
 
-const STUB_PATHS = ['/about'] as const;
+const STUB_PATHS = ['/about', '/watch'] as const;
 
 type ProvidersProps = {
   children: ReactNode;

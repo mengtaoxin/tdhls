@@ -2,7 +2,7 @@
 
 A browser HLS player: paste an `.m3u8` URL and watch. No backend — a static SPA built with React, MUI, and hls.js. UI is English / 中文.
 
-> Status: project scaffold only. The app shell, routing, i18n, PWA, and test tooling are in place; playback is not implemented yet.
+Plays VOD and live streams. Live playback stays a chosen delay (10s / 30s / 60s, default 60s) behind the live edge so the player always has a buffer. Pausing a live stream resumes where it stopped. Streams must be served with CORS headers.
 
 ## Requirements
 

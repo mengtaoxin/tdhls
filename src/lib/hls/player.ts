@@ -1,4 +1,4 @@
-import { buildHlsConfig } from '@/lib/hls/hlsConfig';
+import { buildHlsConfig, LIVE_BUFFER_CONFIG } from '@/lib/hls/hlsConfig';
 import { hlsJsEngine, type HlsEngine } from '@/lib/hls/hlsEngine';
 
 export type PlayerErrorKind = 'network' | 'media' | 'unsupported';
@@ -33,6 +33,14 @@ function delayedLivePoint(video: HTMLVideoElement, delaySec: number): number | n
   return range ? Math.max(range.start, range.end - delaySec) : null;
 }
 
+function isBuffered(video: HTMLVideoElement, time: number): boolean {
+  const { buffered } = video;
+  for (let i = 0; i < buffered.length; i++) {
+    if (time >= buffered.start(i) && time < buffered.end(i)) return true;
+  }
+  return false;
+}
+
 export function attachStream(
   video: HTMLVideoElement,
   url: string,
@@ -45,7 +53,7 @@ export function attachStream(
   return { destroy: () => {}, getLatency: () => null, seekToLiveSync: () => {} };
 }
 
-/** Tracks live state and resyncs a live stream whose paused position fell out of the window. */
+/** Tracks live state and resyncs a live stream whose paused position is no longer playable. */
 function createLiveTracker(
   video: HTMLVideoElement,
   options: AttachOptions,
@@ -60,8 +68,9 @@ function createLiveTracker(
 
   const onPlay = () => {
     if (!live) return;
+    const { currentTime } = video;
     const range = seekableRange(video);
-    if (range && video.currentTime < range.start) seekToLiveSync();
+    if (range && currentTime < range.start && !isBuffered(video, currentTime)) seekToLiveSync();
   };
   video.addEventListener('play', onPlay);
 
@@ -86,7 +95,10 @@ function attachWithHlsJs(
   let recoveredMediaError = false;
 
   const hls = engine.create(buildHlsConfig(options.liveDelaySec), {
-    onLive: (live) => tracker.setLive(live),
+    onLive(live) {
+      if (live && !tracker.isLive()) hls.updateConfig(LIVE_BUFFER_CONFIG);
+      tracker.setLive(live);
+    },
     onFatalError(type) {
       if (type === 'media' && !recoveredMediaError) {
         recoveredMediaError = true;

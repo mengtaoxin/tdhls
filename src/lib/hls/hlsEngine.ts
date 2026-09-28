@@ -10,6 +10,7 @@ export type HlsEngineEvents = {
 /** The subset of an hls.js instance the player adapter relies on. */
 export type HlsInstance = {
   load: (url: string, media: HTMLMediaElement) => void;
+  updateConfig: (patch: Partial<HlsConfig>) => void;
   recoverMediaError: () => void;
   destroy: () => void;
   readonly latency: number;
@@ -41,6 +42,9 @@ export const hlsJsEngine: HlsEngine = {
       load(url, media) {
         hls.attachMedia(media);
         hls.loadSource(url);
+      },
+      updateConfig(patch) {
+        Object.assign(hls.config, patch);
       },
       recoverMediaError: () => hls.recoverMediaError(),
       destroy: () => hls.destroy(),

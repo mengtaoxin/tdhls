@@ -8,7 +8,6 @@ import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 import PauseIcon from '@mui/icons-material/Pause';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import VolumeDownIcon from '@mui/icons-material/VolumeDown';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import { useTranslation } from 'react-i18next';
@@ -30,11 +29,6 @@ export type PlayerControlsProps = {
 
 const sliderValue = (value: number | number[]) => (Array.isArray(value) ? (value[0] ?? 0) : value);
 
-function VolumeIcon({ volume, muted }: { volume: number; muted: boolean }) {
-  if (muted || volume === 0) return <VolumeOffIcon />;
-  return volume < 0.5 ? <VolumeDownIcon /> : <VolumeUpIcon />;
-}
-
 export function PlayerControls({
   controls,
   isLive,
@@ -43,7 +37,7 @@ export function PlayerControls({
   onBackToLive,
 }: PlayerControlsProps) {
   const { t } = useTranslation();
-  const { paused, muted, volume, currentTime, duration, isFullscreen } = controls;
+  const { paused, muted, currentTime, duration, isFullscreen } = controls;
   const canSeek = !isLive && Number.isFinite(duration) && duration > 0;
   const farBehindLive = latency != null && latency > liveDelaySec + BACK_TO_LIVE_MARGIN_SEC;
 
@@ -65,18 +59,8 @@ export function PlayerControls({
         onClick={controls.toggleMute}
         color="inherit"
       >
-        <VolumeIcon volume={volume} muted={muted} />
+        {muted ? <VolumeOffIcon /> : <VolumeUpIcon />}
       </IconButton>
-      <Slider
-        size="small"
-        min={0}
-        max={1}
-        step={0.05}
-        value={muted ? 0 : volume}
-        onChange={(_event, value) => controls.setVolume(sliderValue(value))}
-        slotProps={{ input: { 'aria-label': t('watch.controls.volume') } }}
-        sx={{ width: 96, mr: 1 }}
-      />
 
       {isLive ? (
         <>

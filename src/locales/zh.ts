@@ -29,7 +29,6 @@ export default {
       pause: '暂停',
       mute: '静音',
       unmute: '取消静音',
-      volume: '音量',
       seek: '进度',
       fullscreen: '全屏',
       exitFullscreen: '退出全屏',

@@ -2,8 +2,6 @@ import { useEffect, useState, type RefObject } from 'react';
 
 import { usePlayerPrefsStore } from '@/stores/playerPrefs';
 
-const UNMUTE_FALLBACK_VOLUME = 0.5;
-
 type PlaybackState = {
   paused: boolean;
   currentTime: number;
@@ -16,9 +14,7 @@ export function useVideoControls(
   videoRef: RefObject<HTMLVideoElement | null>,
   containerRef: RefObject<HTMLElement | null>,
 ) {
-  const volume = usePlayerPrefsStore((s) => s.volume);
   const muted = usePlayerPrefsStore((s) => s.muted);
-  const storeVolume = usePlayerPrefsStore((s) => s.setVolume);
   const storeMuted = usePlayerPrefsStore((s) => s.setMuted);
 
   const [playback, setPlayback] = useState<PlaybackState>({
@@ -31,9 +27,8 @@ export function useVideoControls(
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
-    video.volume = volume;
     video.muted = muted;
-  }, [videoRef, volume, muted]);
+  }, [videoRef, muted]);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -72,15 +67,7 @@ export function useVideoControls(
     }
   };
 
-  const setVolume = (value: number) => {
-    storeVolume(value);
-    if (value > 0 && muted) storeMuted(false);
-  };
-
-  const toggleMute = () => {
-    if (muted && volume === 0) storeVolume(UNMUTE_FALLBACK_VOLUME);
-    storeMuted(!muted);
-  };
+  const toggleMute = () => storeMuted(!muted);
 
   const seek = (time: number) => {
     const video = videoRef.current;
@@ -98,11 +85,9 @@ export function useVideoControls(
 
   return {
     ...playback,
-    volume,
     muted,
     isFullscreen,
     togglePlay,
-    setVolume,
     toggleMute,
     seek,
     toggleFullscreen,

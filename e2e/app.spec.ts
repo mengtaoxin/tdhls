@@ -21,7 +21,7 @@ test('opens the watch page with player controls for a pasted stream URL', async 
   const player = page.getByRole('region', { name: 'Video player' });
   await expect(player.locator('video')).toBeVisible();
   await expect(player.getByRole('button', { name: /^(Play|Pause)$/ })).toBeVisible();
-  await expect(player.getByRole('slider', { name: 'Volume' })).toBeAttached();
+  await expect(player.getByRole('button', { name: /^(Mute|Unmute)$/ })).toBeVisible();
 
   await page.reload();
   await expect(player.locator('video')).toBeVisible();

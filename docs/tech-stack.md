@@ -43,7 +43,7 @@ On native HLS, the player seeks to `seekable.end - delay` (clamped to `seekable.
 
 **Pause on live.** Pausing keeps the playhead, so resuming continues from the same spot with a larger delay, even after that spot has slid out of the playlist window, as long as it is still buffered. Only when the paused position is neither in the window (`currentTime < seekable.start`) nor buffered does the player seek to the delayed live point on `play`. The control bar shows "Back to live" once latency exceeds the delay by more than 10 seconds.
 
-**Controls.** The `<video>` has no native controls. `PlayerControls` gives play/pause, mute, volume (stored as `tdhls.volume` / `tdhls.muted`), a seek bar for VOD, the live badge with latency, and fullscreen. With the player focused, Space toggles play and M toggles mute. In fullscreen the controls overlay the video and hide (with the cursor) after 10 seconds without activity; moving the pointer, clicking, or pressing a key on the player shows them again and restarts the timer. If the browser blocks autoplay, the video stays paused until the user presses play.
+**Controls.** The `<video>` has no native controls. `PlayerControls` gives play/pause, mute (stored as `tdhls.muted`; there is no volume slider, so loudness follows the system volume), a seek bar for VOD, the live badge with latency, and fullscreen. With the player focused, Space toggles play and M toggles mute. In fullscreen the controls overlay the video and hide (with the cursor) after 10 seconds without activity; moving the pointer, clicking, or pressing a key on the player shows them again and restarts the timer. If the browser blocks autoplay, the video stays paused until the user presses play.
 
 ## PWA
 

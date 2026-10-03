@@ -11,11 +11,9 @@ function fakeControls(overrides: Partial<VideoControls> = {}): VideoControls {
     paused: true,
     currentTime: 10,
     duration: 100,
-    volume: 0.5,
     muted: false,
     isFullscreen: false,
     togglePlay: vi.fn(),
-    setVolume: vi.fn(),
     toggleMute: vi.fn(),
     seek: vi.fn(),
     toggleFullscreen: vi.fn(),
@@ -59,12 +57,10 @@ describe('PlayerControls', () => {
     expect(screen.getByRole('button', { name: 'Unmute' })).toBeInTheDocument();
   });
 
-  it('changes the volume from the slider', () => {
-    const { controls } = renderControls();
+  it('has no volume slider so the system volume applies', () => {
+    renderControls();
 
-    fireEvent.change(screen.getByRole('slider', { name: 'Volume' }), { target: { value: 0.3 } });
-
-    expect(controls.setVolume).toHaveBeenCalledWith(0.3);
+    expect(screen.queryByRole('slider', { name: 'Volume' })).not.toBeInTheDocument();
   });
 
   it('shows a seek bar and time for VOD', () => {

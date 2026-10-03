@@ -54,7 +54,8 @@ describe('WatchPage', () => {
     const video = screen.getByTestId('player-video');
     expect(video).not.toHaveAttribute('controls');
     expect(screen.getByRole('button', { name: 'Play' })).toBeInTheDocument();
-    expect(screen.getByRole('slider', { name: 'Volume' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Mute' })).toBeInTheDocument();
+    expect(screen.queryByRole('slider', { name: 'Volume' })).not.toBeInTheDocument();
     expect(useHlsPlayerMock).toHaveBeenLastCalledWith(expect.anything(), STREAM, 60);
   });
 

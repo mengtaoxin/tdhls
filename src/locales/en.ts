@@ -27,7 +27,6 @@ export default {
       pause: 'Pause',
       mute: 'Mute',
       unmute: 'Unmute',
-      volume: 'Volume',
       seek: 'Seek',
       fullscreen: 'Fullscreen',
       exitFullscreen: 'Exit fullscreen',

@@ -2,7 +2,6 @@ export default {
   nav: {
     home: 'Home',
     about: 'About',
-    language: 'Language',
   },
   home: {
     title: 'HLS streams, in the browser',
@@ -40,6 +39,7 @@ export default {
   },
   settings: {
     title: 'Settings',
+    language: 'Language',
     liveDelay: 'Live delay',
     liveDelayOption: '{seconds}s',
   },

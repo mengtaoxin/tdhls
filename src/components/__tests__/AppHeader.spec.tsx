@@ -3,26 +3,25 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { AppHeader } from '@/components/AppHeader';
-import { LOCALE_KEY } from '@/lib/locale';
 import { renderWithTestRouter } from '@/__tests__/renderWithProviders';
 
 describe('AppHeader', () => {
-  it('switches the UI language from the locale menu and persists it', async () => {
-    const user = userEvent.setup();
-    await renderWithTestRouter({ component: AppHeader });
+  it('renders the navigation links', async () => {
+    await renderWithTestRouter({ component: AppHeader, extraPaths: ['/settings'] });
 
     expect(screen.getByRole('link', { name: 'Home' })).toBeInTheDocument();
-
-    await user.click(screen.getByTestId('nav-locale-toggle'));
-    await user.click(await screen.findByTestId('locale-option-zh'));
-
-    expect(await screen.findByRole('link', { name: '首页' })).toBeInTheDocument();
-    expect(localStorage.getItem(LOCALE_KEY)).toBe('zh');
+    expect(screen.getByRole('link', { name: 'About' })).toBeInTheDocument();
   });
 
-  it('offers the settings menu', async () => {
-    await renderWithTestRouter({ component: AppHeader });
+  it('navigates to the settings page from the gear link', async () => {
+    const user = userEvent.setup();
+    const { router } = await renderWithTestRouter({
+      component: AppHeader,
+      extraPaths: ['/settings'],
+    });
 
-    expect(screen.getByRole('button', { name: 'Settings' })).toBeInTheDocument();
+    await user.click(screen.getByRole('link', { name: 'Settings' }));
+
+    expect(router.state.location.href).toBe('/settings');
   });
 });

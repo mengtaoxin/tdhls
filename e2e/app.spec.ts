@@ -41,3 +41,18 @@ test('navigates to About from the header', async ({ page }) => {
   await expect(page).toHaveURL(/\/about$/);
   await expect(page.getByRole('heading', { name: 'tdhls' })).toBeVisible();
 });
+
+test('opens the settings page and updates preferences', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('link', { name: 'Settings' }).click();
+
+  await expect(page).toHaveURL(/\/settings$/);
+  await expect(page.getByRole('heading', { name: 'Settings' })).toBeVisible();
+
+  await page.getByRole('radio', { name: '30s' }).check();
+  await page.reload();
+  await expect(page.getByRole('radio', { name: '30s' })).toBeChecked();
+
+  await page.getByRole('radio', { name: '中文' }).check();
+  await expect(page.getByRole('heading', { name: '设置' })).toBeVisible();
+});

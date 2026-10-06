@@ -4,7 +4,6 @@ export default {
   nav: {
     home: '首页',
     about: '关于',
-    language: '语言',
   },
   home: {
     title: '在浏览器里播放 HLS 流',
@@ -42,6 +41,7 @@ export default {
   },
   settings: {
     title: '设置',
+    language: '语言',
     liveDelay: '直播延迟',
     liveDelayOption: '{seconds} 秒',
   },

@@ -1,18 +1,12 @@
-import { useState, type MouseEvent } from 'react';
 import { Link } from '@tanstack/react-router';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
+import IconButton from '@mui/material/IconButton';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import TranslateIcon from '@mui/icons-material/Translate';
+import SettingsIcon from '@mui/icons-material/Settings';
 import { useTranslation } from 'react-i18next';
-
-import { SettingsMenu } from '@/components/SettingsMenu';
-import { SUPPORTED_LOCALES } from '@/lib/locale';
-import { useLocaleStore } from '@/stores/locale';
 
 const NAV_ITEMS = [
   { to: '/', labelKey: 'nav.home' },
@@ -21,12 +15,6 @@ const NAV_ITEMS = [
 
 export function AppHeader() {
   const { t } = useTranslation();
-  const locale = useLocaleStore((s) => s.locale);
-  const setLocale = useLocaleStore((s) => s.setLocale);
-  const [localeAnchor, setLocaleAnchor] = useState<HTMLElement | null>(null);
-
-  const openLocaleMenu = (event: MouseEvent<HTMLElement>) => setLocaleAnchor(event.currentTarget);
-  const closeLocaleMenu = () => setLocaleAnchor(null);
 
   return (
     <AppBar position="static" color="transparent" elevation={0}>
@@ -47,38 +35,15 @@ export function AppHeader() {
             </Button>
           ))}
         </Box>
-        <Button
-          data-testid="nav-locale-toggle"
+        <IconButton
+          component={Link}
+          to="/settings"
+          data-testid="nav-settings-link"
           color="inherit"
-          startIcon={<TranslateIcon />}
-          aria-label={t('nav.language')}
-          aria-haspopup="menu"
-          aria-expanded={localeAnchor ? 'true' : undefined}
-          onClick={openLocaleMenu}
+          aria-label={t('settings.title')}
         >
-          {t(`locale.${locale}`)}
-        </Button>
-        <Menu
-          data-testid="nav-locale-menu"
-          anchorEl={localeAnchor}
-          open={localeAnchor != null}
-          onClose={closeLocaleMenu}
-        >
-          {SUPPORTED_LOCALES.map((code) => (
-            <MenuItem
-              key={code}
-              data-testid={`locale-option-${code}`}
-              selected={code === locale}
-              onClick={() => {
-                setLocale(code);
-                closeLocaleMenu();
-              }}
-            >
-              {t(`locale.${code}`)}
-            </MenuItem>
-          ))}
-        </Menu>
-        <SettingsMenu />
+          <SettingsIcon />
+        </IconButton>
       </Toolbar>
     </AppBar>
   );

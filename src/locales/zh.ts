@@ -44,6 +44,10 @@ export default {
     language: '语言',
     liveDelay: '直播延迟',
     liveDelayOption: '{seconds} 秒',
+    urlFunction: 'URL 处理函数',
+    urlFunctionHelp:
+      '自定义 JavaScript，接收你输入的视频流地址，返回实际播放的地址。存在语法错误或运行异常时，使用输入的原始地址。',
+    urlFunctionError: '函数无效：{{message}}',
   },
   about: {
     github: 'GitHub 仓库',

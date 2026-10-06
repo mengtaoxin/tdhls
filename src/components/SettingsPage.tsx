@@ -5,10 +5,12 @@ import FormLabel from '@mui/material/FormLabel';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { useTranslation } from 'react-i18next';
 
 import { isLiveDelay, LIVE_DELAY_OPTIONS } from '@/lib/hls/playerPrefs';
+import { getUrlFunctionCompileError } from '@/lib/hls/urlFunction';
 import { isAppLocale, SUPPORTED_LOCALES } from '@/lib/locale';
 import { useLocaleStore } from '@/stores/locale';
 import { usePlayerPrefsStore } from '@/stores/playerPrefs';
@@ -19,6 +21,9 @@ export function SettingsPage() {
   const setLocale = useLocaleStore((s) => s.setLocale);
   const liveDelaySec = usePlayerPrefsStore((s) => s.liveDelaySec);
   const setLiveDelay = usePlayerPrefsStore((s) => s.setLiveDelay);
+  const urlFunction = usePlayerPrefsStore((s) => s.urlFunction);
+  const setUrlFunction = usePlayerPrefsStore((s) => s.setUrlFunction);
+  const urlFunctionError = getUrlFunctionCompileError(urlFunction);
 
   return (
     <Container
@@ -68,6 +73,30 @@ export function SettingsPage() {
               />
             ))}
           </RadioGroup>
+        </FormControl>
+        <FormControl>
+          <FormLabel id="settings-url-function-label">{t('settings.urlFunction')}</FormLabel>
+          <TextField
+            value={urlFunction}
+            onChange={(event) => setUrlFunction(event.target.value)}
+            multiline
+            minRows={4}
+            fullWidth
+            error={urlFunctionError != null}
+            helperText={
+              urlFunctionError != null
+                ? t('settings.urlFunctionError', { message: urlFunctionError })
+                : t('settings.urlFunctionHelp')
+            }
+            slotProps={{
+              htmlInput: {
+                'aria-labelledby': 'settings-url-function-label',
+                spellCheck: false,
+                style: { fontFamily: 'monospace' },
+              },
+            }}
+            sx={{ mt: 1 }}
+          />
         </FormControl>
       </Stack>
     </Container>

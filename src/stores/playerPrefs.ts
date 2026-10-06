@@ -4,6 +4,7 @@ import {
   resolvePlayerPrefs,
   writeLiveDelay,
   writeMuted,
+  writeUrlFunction,
   type LiveDelay,
   type PlayerPrefs,
 } from '@/lib/hls/playerPrefs';
@@ -11,6 +12,7 @@ import {
 type PlayerPrefsState = PlayerPrefs & {
   setLiveDelay: (value: LiveDelay) => void;
   setMuted: (value: boolean) => void;
+  setUrlFunction: (value: string) => void;
 };
 
 export const usePlayerPrefsStore = create<PlayerPrefsState>((set) => ({
@@ -24,5 +26,10 @@ export const usePlayerPrefsStore = create<PlayerPrefsState>((set) => ({
   setMuted(value) {
     writeMuted(value);
     set({ muted: value });
+  },
+
+  setUrlFunction(value) {
+    writeUrlFunction(value);
+    set({ urlFunction: value });
   },
 }));

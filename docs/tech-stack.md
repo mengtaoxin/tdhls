@@ -25,9 +25,9 @@ Prefer MUI components and theme/`sx`; use `src/styles/` for global tweaks. No Vu
 
 ## HLS
 
-`/watch` plays the stream URL passed in router history state (not the query), so it survives a reload but a bare `/watch` link shows an invalid-URL error. `src/lib/hls/player.ts` (`attachStream`) uses hls.js (MSE) where `Hls.isSupported()`. It falls back to native `<video src>` on Safari / iOS where `video.canPlayType('application/vnd.apple.mpegurl')` is truthy, and otherwise reports "unsupported". Streams are fetched directly from their origin, so they must send CORS headers.
+`/watch` plays the stream URL passed in router history state (not the query), so it survives a reload but a bare `/watch` link shows an invalid-URL error. Before playing, the home page runs the entered URL through the URL function: a JavaScript function-expression source from settings (`tdhls.urlFunction`, default `function (url) { return url; }`, evaluated in `src/lib/hls/urlFunction.ts`). Its string result is the real stream URL; syntax errors, thrown exceptions, or non-string results fall back to the entered URL. `src/lib/hls/player.ts` (`attachStream`) uses hls.js (MSE) where `Hls.isSupported()`. It falls back to native `<video src>` on Safari / iOS where `video.canPlayType('application/vnd.apple.mpegurl')` is truthy, and otherwise reports "unsupported". Streams are fetched directly from their origin, so they must send CORS headers.
 
-**Live delay and buffer.** The user picks a delay of 10, 30, or 60 seconds on the settings page (`/settings`, `SettingsPage`; default 60, stored as `tdhls.liveDelay`). The page also holds the UI-language picker; the header gear icon only links there, and the player page has no delay picker. `src/lib/hls/hlsConfig.ts` maps it to hls.js settings:
+**Live delay and buffer.** The user picks a delay of 10, 30, or 60 seconds on the settings page (`/settings`, `SettingsPage`; default 60, stored as `tdhls.liveDelay`). The page also holds the UI-language picker and the URL function editor; the header gear icon only links there, and the player page has no delay picker. `src/lib/hls/hlsConfig.ts` maps it to hls.js settings:
 
 | Setting                   | Value                | Why                                                    |
 | ------------------------- | -------------------- | ------------------------------------------------------ |

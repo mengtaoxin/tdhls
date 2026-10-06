@@ -5,6 +5,7 @@ import { RouterProvider, createMemoryHistory, createRouter } from '@tanstack/rea
 
 import { routeTree } from '@/routeTree.gen';
 import { LIVE_DELAY_KEY } from '@/lib/hls/playerPrefs';
+import { DEFAULT_URL_FUNCTION, URL_FUNCTION_KEY } from '@/lib/hls/urlFunction';
 import { LOCALE_KEY } from '@/lib/locale';
 import { usePlayerPrefsStore } from '@/stores/playerPrefs';
 import { TestProviders } from '@/__tests__/renderWithProviders';
@@ -53,5 +54,38 @@ describe('/settings route', () => {
     expect(usePlayerPrefsStore.getState().liveDelaySec).toBe(30);
     expect(localStorage.getItem(LIVE_DELAY_KEY)).toBe('30');
     expect(screen.getByRole('radio', { name: '30s' })).toBeChecked();
+  });
+
+  it('shows the default url function source in the editor', async () => {
+    const router = await renderApp();
+    await router.navigate({ to: '/settings' });
+
+    expect(screen.getByLabelText('URL function')).toHaveValue(DEFAULT_URL_FUNCTION);
+  });
+
+  it('edits the url function and persists it', async () => {
+    const user = userEvent.setup();
+    const router = await renderApp();
+    await router.navigate({ to: '/settings' });
+
+    const editor = screen.getByLabelText('URL function');
+    await user.clear(editor);
+    const customFunction = '(url) => url + "?token=1"';
+    await user.type(editor, customFunction);
+
+    expect(localStorage.getItem(URL_FUNCTION_KEY)).toBe(customFunction);
+    expect(usePlayerPrefsStore.getState().urlFunction).toBe(customFunction);
+  });
+
+  it('warns when the url function source cannot be compiled', async () => {
+    const user = userEvent.setup();
+    const router = await renderApp();
+    await router.navigate({ to: '/settings' });
+
+    const editor = screen.getByLabelText('URL function');
+    await user.clear(editor);
+    await user.type(editor, 'function (url) {{');
+
+    expect(screen.getByText(/Invalid function/)).toBeInTheDocument();
   });
 });

@@ -42,6 +42,10 @@ export default {
     language: 'Language',
     liveDelay: 'Live delay',
     liveDelayOption: '{seconds}s',
+    urlFunction: 'URL function',
+    urlFunctionHelp:
+      'JavaScript that receives the stream URL you enter and returns the real URL to play. Syntax errors or exceptions fall back to the entered URL.',
+    urlFunctionError: 'Invalid function: {{message}}',
   },
   about: {
     github: 'GitHub repository',

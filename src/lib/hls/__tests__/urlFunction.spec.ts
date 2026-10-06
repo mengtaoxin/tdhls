@@ -13,6 +13,11 @@ describe('urlFunction', () => {
     expect(applyUrlFunction(DEFAULT_URL_FUNCTION, url)).toBe(url);
   });
 
+  it('uses a default source that is valid standalone code (named function declaration)', () => {
+    expect(() => new Function(DEFAULT_URL_FUNCTION)).not.toThrow();
+    expect(getUrlFunctionCompileError(DEFAULT_URL_FUNCTION)).toBeNull();
+  });
+
   it('passes the input url to a custom function and uses its string result', () => {
     const source = 'function (url) { return url.replace("a.m3u8", "b.m3u8"); }';
 

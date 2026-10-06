@@ -1,6 +1,6 @@
 export const URL_FUNCTION_KEY = 'tdhls.urlFunction';
 
-export const DEFAULT_URL_FUNCTION = `function (url) {
+export const DEFAULT_URL_FUNCTION = `function transform(url) {
   return url;
 }`;
 

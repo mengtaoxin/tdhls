@@ -1,9 +1,11 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { HomePage } from '@/components/HomePage';
 import { STREAM_HISTORY_KEY, readStreamHistory } from '@/lib/hls/streamHistory';
+import { DEFAULT_URL_FUNCTION } from '@/lib/hls/urlFunction';
+import { usePlayerPrefsStore } from '@/stores/playerPrefs';
 import { renderWithTestRouter } from '@/__tests__/renderWithProviders';
 
 const url = (n: number) => `https://example.com/${n}.m3u8`;
@@ -13,6 +15,27 @@ function seedHistory(urls: string[]) {
 }
 
 describe('HomePage', () => {
+  afterEach(() => {
+    usePlayerPrefsStore.setState({ urlFunction: DEFAULT_URL_FUNCTION });
+  });
+
+  it('keeps the entered url in history and state while passing the transformed url for playback', async () => {
+    usePlayerPrefsStore.setState({
+      urlFunction: 'function (u) { return u.replace("a.m3u8", "b.m3u8"); }',
+    });
+    const user = userEvent.setup();
+    const { router } = await renderWithTestRouter({ component: HomePage });
+    const entered = 'https://example.com/a.m3u8';
+    const played = 'https://example.com/b.m3u8';
+
+    await user.type(screen.getByLabelText('Stream URL (.m3u8)'), `${entered}{Enter}`);
+
+    await expect.poll(() => router.state.location.pathname).toBe('/watch');
+    expect(router.state.location.state.streamUrl).toBe(entered);
+    expect(router.state.location.state.playbackUrl).toBe(played);
+    expect(readStreamHistory()).toEqual([entered]);
+  });
+
   it('plays a submitted URL via history state, not the query, and saves it', async () => {
     const user = userEvent.setup();
     const { router } = await renderWithTestRouter({ component: HomePage });
@@ -23,6 +46,7 @@ describe('HomePage', () => {
     await expect.poll(() => router.state.location.pathname).toBe('/watch');
     expect(router.state.location.href).toBe('/watch');
     expect(router.state.location.state.streamUrl).toBe(stream);
+    expect(router.state.location.state.playbackUrl).toBe(stream);
     expect(readStreamHistory()).toEqual([stream]);
   });
 
@@ -55,6 +79,7 @@ describe('HomePage', () => {
 
     await expect.poll(() => router.state.location.pathname).toBe('/watch');
     expect(router.state.location.state.streamUrl).toBe(url(1));
+    expect(router.state.location.state.playbackUrl).toBe(url(1));
     expect(readStreamHistory()).toEqual([url(1), url(2)]);
   });
 

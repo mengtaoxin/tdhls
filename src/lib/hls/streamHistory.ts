@@ -3,7 +3,7 @@ import { getItem, setItem, type ClientStorage } from '@/lib/clientStorage';
 export const STREAM_HISTORY_KEY = 'tdhls.streamHistory';
 export const STREAM_HISTORY_LIMIT = 10;
 
-/** Previously played stream URLs, most recent first. */
+/** Stream URLs the user entered and played, most recent first. */
 export function readStreamHistory(storage: ClientStorage = localStorage): string[] {
   const raw = getItem(STREAM_HISTORY_KEY, storage);
   if (!raw) return [];

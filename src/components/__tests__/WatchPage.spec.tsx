@@ -25,8 +25,10 @@ function mockPlayer(overrides: Partial<ReturnType<typeof useHlsPlayer>> = {}) {
   return player;
 }
 
-async function renderWatch(url = STREAM) {
-  return renderWithTestRouter({ component: () => <WatchPage url={url} /> });
+async function renderWatch(url = STREAM, playbackUrl?: string) {
+  return renderWithTestRouter({
+    component: () => <WatchPage url={url} playbackUrl={playbackUrl} />,
+  });
 }
 
 describe('WatchPage', () => {
@@ -57,6 +59,17 @@ describe('WatchPage', () => {
     expect(screen.getByRole('button', { name: 'Mute' })).toBeInTheDocument();
     expect(screen.queryByRole('slider', { name: 'Volume' })).not.toBeInTheDocument();
     expect(useHlsPlayerMock).toHaveBeenLastCalledWith(expect.anything(), STREAM, 60);
+    expect(screen.getByText(STREAM)).toBeInTheDocument();
+  });
+
+  it('plays the transformed url while displaying the entered url', async () => {
+    const entered = 'https://example.com/entered.m3u8';
+    const transformed = 'https://cdn.example.com/real.m3u8';
+    await renderWatch(entered, transformed);
+
+    expect(useHlsPlayerMock).toHaveBeenLastCalledWith(expect.anything(), transformed, 60);
+    expect(screen.getByText(entered)).toBeInTheDocument();
+    expect(screen.queryByText(transformed)).not.toBeInTheDocument();
   });
 
   it('shows player errors', async () => {

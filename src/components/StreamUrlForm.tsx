@@ -6,23 +6,20 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { useTranslation } from 'react-i18next';
 
 import { parseStreamUrl } from '@/lib/hls/streamUrl';
-import { applyUrlFunction } from '@/lib/hls/urlFunction';
-import { usePlayerPrefsStore } from '@/stores/playerPrefs';
 
 export function StreamUrlForm({ onPlay }: { onPlay: (url: string) => void }) {
   const { t } = useTranslation();
-  const urlFunction = usePlayerPrefsStore((s) => s.urlFunction);
   const [value, setValue] = useState('');
   const [invalid, setInvalid] = useState(false);
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const parsed = parseStreamUrl(value);
-    if (!parsed) {
+    const url = parseStreamUrl(value);
+    if (!url) {
       setInvalid(true);
       return;
     }
-    onPlay(applyUrlFunction(urlFunction, parsed));
+    onPlay(url);
   };
 
   return (

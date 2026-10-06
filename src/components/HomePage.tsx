@@ -6,15 +6,19 @@ import { useTranslation } from 'react-i18next';
 import { StreamHistoryList } from '@/components/StreamHistoryList';
 import { StreamUrlForm } from '@/components/StreamUrlForm';
 import { useStreamHistory } from '@/hooks/useStreamHistory';
+import { applyUrlFunction } from '@/lib/hls/urlFunction';
+import { usePlayerPrefsStore } from '@/stores/playerPrefs';
 
 export function HomePage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { history, add, remove } = useStreamHistory();
+  const urlFunction = usePlayerPrefsStore((s) => s.urlFunction);
 
   const play = (url: string) => {
     add(url);
-    void navigate({ to: '/watch', state: { streamUrl: url } });
+    const playbackUrl = applyUrlFunction(urlFunction, url);
+    void navigate({ to: '/watch', state: { streamUrl: url, playbackUrl } });
   };
 
   return (

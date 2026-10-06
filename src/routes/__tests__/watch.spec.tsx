@@ -16,6 +16,7 @@ vi.mock('@/hooks/useHlsPlayer', () => ({
 }));
 
 const STREAM = 'https://example.com/live/index.m3u8?token=a&b=1';
+const PLAYBACK = 'https://cdn.example.com/real/index.m3u8?sig=xyz';
 
 async function renderApp() {
   const router = createRouter({ routeTree, history: createMemoryHistory() });
@@ -29,13 +30,15 @@ async function renderApp() {
 }
 
 describe('/watch route', () => {
-  it('plays the stream URL passed in history state without exposing it in the address', async () => {
+  it('plays the transformed url while showing the entered url, without exposing either in the address', async () => {
     const router = await renderApp();
 
-    await router.navigate({ to: '/watch', state: { streamUrl: STREAM } });
+    await router.navigate({ to: '/watch', state: { streamUrl: STREAM, playbackUrl: PLAYBACK } });
 
     expect(await screen.findByTestId('player-video')).toBeInTheDocument();
-    expect(vi.mocked(useHlsPlayer)).toHaveBeenLastCalledWith(expect.anything(), STREAM, 60);
+    expect(vi.mocked(useHlsPlayer)).toHaveBeenLastCalledWith(expect.anything(), PLAYBACK, 60);
+    expect(screen.getByText(STREAM)).toBeInTheDocument();
+    expect(screen.queryByText(PLAYBACK)).not.toBeInTheDocument();
     expect(router.state.location.href).toBe('/watch');
   });
 

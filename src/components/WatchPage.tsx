@@ -9,9 +9,11 @@ import { useTranslation } from 'react-i18next';
 import { VideoPlayer } from '@/components/VideoPlayer';
 import { parseStreamUrl } from '@/lib/hls/streamUrl';
 
-export function WatchPage({ url }: { url: string }) {
+export function WatchPage({ url, playbackUrl }: { url: string; playbackUrl?: string }) {
   const { t } = useTranslation();
   const streamUrl = parseStreamUrl(url);
+  // Fallback keeps direct renders / older history state working.
+  const playUrl = streamUrl ? (playbackUrl ?? streamUrl) : null;
 
   return (
     <Container
@@ -20,9 +22,9 @@ export function WatchPage({ url }: { url: string }) {
       <Button component={Link} to="/" color="inherit" startIcon={<ArrowBackIcon />} sx={{ mb: 2 }}>
         {t('watch.back')}
       </Button>
-      {streamUrl ? (
+      {playUrl ? (
         <>
-          <VideoPlayer key={streamUrl} url={streamUrl} />
+          <VideoPlayer key={playUrl} url={playUrl} />
           <Typography variant="body2" color="text.secondary" sx={{ mt: 1, wordBreak: 'break-all' }}>
             {streamUrl}
           </Typography>

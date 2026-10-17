@@ -21,6 +21,11 @@ const HLS_MIME = 'application/vnd.apple.mpegurl';
 const MEDIA_ERR_NETWORK = 2;
 /** Ignore tiny decoder nudges; larger forward seeks are treated as catch-up. */
 const FORWARD_SEEK_TOLERANCE_SEC = 0.5;
+/**
+ * When stalled in a hole, accept a jump near the next buffered range start.
+ * Farther seeks (live-edge chase) are clamped to that start instead.
+ */
+const GAP_SKIP_TOLERANCE_SEC = 1;
 
 type SeekRange = { start: number; end: number };
 
@@ -43,6 +48,17 @@ function isBuffered(video: HTMLVideoElement, time: number): boolean {
   return false;
 }
 
+/** Start of the first buffered range that begins at or after `afterTime`. */
+function nextBufferedStart(video: HTMLVideoElement, afterTime: number): number | null {
+  const { buffered } = video;
+  let next: number | null = null;
+  for (let i = 0; i < buffered.length; i++) {
+    const start = buffered.start(i);
+    if (start >= afterTime && (next == null || start < next)) next = start;
+  }
+  return next;
+}
+
 export function attachStream(
   video: HTMLVideoElement,
   url: string,
@@ -56,8 +72,9 @@ export function attachStream(
 }
 
 /**
- * Tracks live state, blocks unintended forward seeks toward the live edge, and
- * resyncs only when a paused position is no longer playable.
+ * Tracks live state, blocks unintended forward seeks toward the live edge,
+ * allows buffer-hole skips so stall recovery can resume, and resyncs only when
+ * a paused position is no longer playable.
  */
 function createLiveTracker(
   video: HTMLVideoElement,
@@ -118,6 +135,28 @@ function createLiveTracker(
     if (range && lastTime < range.start && !isBuffered(video, lastTime)) {
       lastTime = target;
       latencyFloor = null;
+      return;
+    }
+
+    // Still playable: reject catch-up toward the live edge.
+    if (isBuffered(video, lastTime)) {
+      reverting = true;
+      video.currentTime = lastTime;
+      reverting = false;
+      return;
+    }
+
+    // Unbuffered stall: allow (or clamp to) the next buffered range start.
+    const nextStart = nextBufferedStart(video, lastTime);
+    if (nextStart != null) {
+      if (target <= nextStart + GAP_SKIP_TOLERANCE_SEC) {
+        lastTime = target;
+        return;
+      }
+      reverting = true;
+      video.currentTime = nextStart;
+      lastTime = nextStart;
+      reverting = false;
       return;
     }
 

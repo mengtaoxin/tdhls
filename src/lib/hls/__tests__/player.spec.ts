@@ -241,10 +241,49 @@ describe('attachStream with hls.js', () => {
     video.currentTime = 910;
     video.emit('timeupdate');
 
-    // hls.js gap-controller / live sync may try to jump closer to the edge.
+    // Still buffered: live sync / catch-up must not advance the playhead.
     video.currentTime = 915;
 
     expect(video.currentTime).toBe(910);
+  });
+
+  it('allows a forward seek that skips a buffer hole to the next buffered range', () => {
+    const { video, instances } = setup();
+    const hls = instances[0]!;
+    hls.events.onLive(true);
+    hls.liveSyncPosition = 940;
+    video.ranges = [[900, 1000]];
+    // Stalled at the end of the first range (end is exclusive in isBuffered).
+    video.bufferedRanges = [
+      [900, 910],
+      [915, 990],
+    ];
+    video.currentTime = 910;
+    video.emit('timeupdate');
+
+    // hls.js gap-controller jumps to the start of the next buffered media.
+    video.currentTime = 915;
+
+    expect(video.currentTime).toBe(915);
+  });
+
+  it('does not accept a live-edge chase when a nearer buffer-hole skip exists', () => {
+    const { video, instances } = setup();
+    const hls = instances[0]!;
+    hls.events.onLive(true);
+    hls.liveSyncPosition = 940;
+    video.ranges = [[900, 1000]];
+    video.bufferedRanges = [
+      [900, 910],
+      [915, 990],
+    ];
+    video.currentTime = 910;
+    video.emit('timeupdate');
+
+    // synchronizeToLiveEdge would land far past the hole; keep recovery local.
+    video.currentTime = 940;
+
+    expect(video.currentTime).toBe(915);
   });
 
   it('still allows a forward seek when the stall point left the window and is unbuffered', () => {

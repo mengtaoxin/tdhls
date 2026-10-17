@@ -24,4 +24,11 @@ describe('buildHlsConfig', () => {
   it('never speeds playback up to catch up with the target delay', () => {
     expect(buildHlsConfig(60).maxLiveSyncPlaybackRate).toBe(1);
   });
+
+  it('disables low-latency catch-up and prefers buffered recovery over jumping to the edge', () => {
+    const config = buildHlsConfig(60);
+
+    expect(config.lowLatencyMode).toBe(false);
+    expect(config.liveSyncMode).toBe('buffered');
+  });
 });

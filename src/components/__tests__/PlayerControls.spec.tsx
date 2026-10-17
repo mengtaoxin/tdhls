@@ -72,10 +72,12 @@ describe('PlayerControls', () => {
     expect(controls.seek).toHaveBeenCalledWith(42);
   });
 
-  it('shows the live badge and latency without a delay picker for live streams', () => {
+  it('shows a non-interactive live badge and latency without a delay picker', () => {
     renderControls({ isLive: true, latency: 62 });
 
-    expect(screen.getByText('LIVE')).toBeInTheDocument();
+    const live = screen.getByText('LIVE');
+    expect(live.closest('button')).toBeNull();
+    expect(live.closest('.MuiChip-root')).toHaveStyle({ pointerEvents: 'none' });
     expect(screen.getByText('62s behind live')).toBeInTheDocument();
     expect(screen.queryByRole('slider', { name: 'Seek' })).not.toBeInTheDocument();
     for (const name of ['10s', '30s', '60s']) {

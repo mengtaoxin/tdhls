@@ -15,7 +15,7 @@ function timeRanges(ranges: Ranges) {
 }
 
 class FakeVideo extends EventTarget {
-  currentTime = 0;
+  #currentTime = 0;
   duration = Number.NaN;
   src = '';
   error: { code: number } | null = null;
@@ -23,6 +23,17 @@ class FakeVideo extends EventTarget {
   bufferedRanges: Ranges = [];
   canPlayType = vi.fn(() => '');
   load = vi.fn();
+
+  get currentTime() {
+    return this.#currentTime;
+  }
+
+  set currentTime(value: number) {
+    if (value === this.#currentTime) return;
+    this.#currentTime = value;
+    this.dispatchEvent(new Event('seeking'));
+    this.dispatchEvent(new Event('seeked'));
+  }
 
   get seekable() {
     return timeRanges(this.ranges);
@@ -219,6 +230,57 @@ describe('attachStream with hls.js', () => {
     expect(handle.getLatency()).toBe(95);
     handle.seekToLiveSync();
     expect(video.currentTime).toBe(940);
+  });
+
+  it('keeps playing through a stall instead of accepting a forward jump toward the live edge', () => {
+    const { video, instances } = setup();
+    const hls = instances[0]!;
+    hls.events.onLive(true);
+    video.ranges = [[900, 1000]];
+    video.bufferedRanges = [[900, 990]];
+    video.currentTime = 910;
+    video.emit('timeupdate');
+
+    // hls.js gap-controller / live sync may try to jump closer to the edge.
+    video.currentTime = 915;
+
+    expect(video.currentTime).toBe(910);
+  });
+
+  it('still allows a forward seek when the stall point left the window and is unbuffered', () => {
+    const { video, instances } = setup();
+    const hls = instances[0]!;
+    hls.events.onLive(true);
+    hls.liveSyncPosition = 940;
+    video.ranges = [[900, 1000]];
+    video.bufferedRanges = [[900, 990]];
+    video.currentTime = 850;
+    video.emit('timeupdate');
+    video.bufferedRanges = [[860, 990]];
+
+    // Direct seek from hls.js synchronizeToLiveEdge (not our seekToLiveSync helper).
+    video.currentTime = 940;
+
+    expect(video.currentTime).toBe(940);
+  });
+
+  it('never reports a latency drop unless the user seeks back to the live sync point', () => {
+    const { video, instances, handle } = setup();
+    const hls = instances[0]!;
+    hls.events.onLive(true);
+    hls.liveSyncPosition = 940;
+    video.currentTime = 930;
+    video.emit('timeupdate');
+
+    hls.latency = 10;
+    expect(handle.getLatency()).toBe(10);
+
+    hls.latency = 5;
+    expect(handle.getLatency()).toBe(10);
+
+    handle.seekToLiveSync();
+    hls.latency = 5;
+    expect(handle.getLatency()).toBe(5);
   });
 
   it('destroys hls.js and stops listening on destroy', () => {

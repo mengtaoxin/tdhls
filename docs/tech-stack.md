@@ -29,19 +29,21 @@ Prefer MUI components and theme/`sx`; use `src/styles/` for global tweaks. No Vu
 
 **Live delay and buffer.** The user picks a delay of 10, 30, or 60 seconds on the settings page (`/settings`, `SettingsPage`; default 60, stored as `tdhls.liveDelay`). The page also holds the UI-language picker and the URL function editor; the header gear icon only links there, and the player page has no delay picker. `src/lib/hls/hlsConfig.ts` maps it to hls.js settings:
 
-| Setting                   | Value                | Why                                                    |
-| ------------------------- | -------------------- | ------------------------------------------------------ |
-| `liveSyncDuration`        | delay                | Start (and "Back to live") this far behind the edge    |
-| `liveMaxLatencyDuration`  | 24h                  | Never auto-jump forward while paused inside the window |
-| `maxLiveSyncPlaybackRate` | 1                    | Never speed up to catch up                             |
-| `maxBufferLength`         | `max(30, delay)`     | Forward buffer for VOD                                 |
-| `maxMaxBufferLength`      | `max(60, 2 * delay)` | Upper bound for the VOD forward buffer                 |
+| Setting                   | Value                | Why                                                     |
+| ------------------------- | -------------------- | ------------------------------------------------------- |
+| `liveSyncDuration`        | delay                | Start (and "Back to live") this far behind the edge     |
+| `liveMaxLatencyDuration`  | 24h                  | Never auto-jump forward while paused inside the window  |
+| `maxLiveSyncPlaybackRate` | 1                    | Never speed up to catch up                              |
+| `lowLatencyMode`          | `false`              | Delayed viewing, not LL-HLS part / edge chase           |
+| `liveSyncMode`            | `buffered`           | If hls.js must recover, prefer buffered media over edge |
+| `maxBufferLength`         | `max(30, delay)`     | Forward buffer for VOD                                  |
+| `maxMaxBufferLength`      | `max(60, 2 * delay)` | Upper bound for the VOD forward buffer                  |
 
 Once hls.js reports a live playlist, the player raises `maxBufferLength` and `maxMaxBufferLength` to 30 minutes (`LIVE_BUFFER_CONFIG`). While playing this only buffers up to the live edge. While paused, it keeps downloading every new segment before it slides out of the playlist window. If the browser's buffer quota runs out, hls.js lowers `maxMaxBufferLength` itself.
 
 On native HLS, the player seeks to `seekable.end - delay` (clamped to `seekable.start`) on `loadedmetadata` when `duration` is `Infinity`. If the playlist window is shorter than the delay, playback starts at the oldest available segment. The effective delay is then the window length, and this is not an error. Changing the delay re-attaches the player.
 
-**Pause on live.** Pausing keeps the playhead, so resuming continues from the same spot with a larger delay, even after that spot has slid out of the playlist window, as long as it is still buffered. Only when the paused position is neither in the window (`currentTime < seekable.start`) nor buffered does the player seek to the delayed live point on `play`. The control bar shows "Back to live" once latency exceeds the delay by more than 10 seconds.
+**Pause on live / stall recovery.** Pausing or stalling keeps the playhead, so playback continues from the same spot with a larger delay. Latency is allowed to grow and is not shown decreasing unless the user seeks back to live (or reloads / changes the delay). The player also rejects unintended forward seeks (hls.js hole-skips or live-sync jumps) while the stall point is still supposed to be playable. Only when the position is neither in the window (`currentTime < seekable.start`) nor buffered does the player allow a seek to the delayed live point (on `play`, or via hls.js recovery). The control bar shows "Back to live" once latency exceeds the delay by more than 10 seconds.
 
 **Controls.** The `<video>` has no native controls. `PlayerControls` gives play/pause, mute (stored as `tdhls.muted`; there is no volume slider, so loudness follows the system volume), a seek bar for VOD, the live badge with latency, and fullscreen. With the player focused, Space toggles play and M toggles mute. In fullscreen the controls overlay the video and hide (with the cursor) after 10 seconds without activity; moving the pointer, clicking, or pressing a key on the player shows them again and restarts the timer. If the browser blocks autoplay, the video stays paused until the user presses play.
 

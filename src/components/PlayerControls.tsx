@@ -64,7 +64,13 @@ export function PlayerControls({
 
       {isLive ? (
         <>
-          <Chip label={t('watch.live')} color="primary" size="small" />
+          <Chip
+            label={t('watch.live')}
+            color="primary"
+            size="small"
+            component="span"
+            sx={{ pointerEvents: 'none', WebkitTapHighlightColor: 'transparent' }}
+          />
           {latency != null && (
             <Typography variant="body2" color="text.secondary">
               {t('watch.latency', { seconds: latency })}

@@ -24,6 +24,10 @@ export function buildHlsConfig(delaySec: number): Partial<HlsConfig> {
     liveSyncDuration: delaySec,
     liveMaxLatencyDuration: UNLIMITED_LATENCY_SEC,
     maxLiveSyncPlaybackRate: 1,
+    // Delayed viewing, not LL-HLS: skip part loading and related edge chase.
+    lowLatencyMode: false,
+    // When hls.js must recover, prefer the next buffered range over the live sync point.
+    liveSyncMode: 'buffered',
     maxBufferLength: Math.max(30, delaySec),
     maxMaxBufferLength: Math.max(60, 2 * delaySec),
   };

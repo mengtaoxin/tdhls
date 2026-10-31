@@ -23,8 +23,8 @@ Open [http://localhost:3000](http://localhost:3000). Stop with Ctrl+C.
 | --------------------------------------------------- | --------------------------------------------- |
 | `npm run dev`                                       | Start the Vite dev server                     |
 | `npm run build`                                     | Type-check + production build                 |
-| `npm run fmt && npm run lint && npm run type-check` | Format + lint + type-check (**writes files**) |
-| `npm run test:unit` / `test:e2e`                    | Unit (Vitest) / e2e (Playwright)              |
+| `npm run format` then `npm run verify`              | Format (writes) then read-only finish gate    |
+| `npm run test` / `test:e2e`                         | Unit (Vitest) / e2e (Playwright)              |
 
 More: [docs/commands.md](docs/commands.md) · Stack: [docs/tech-stack.md](docs/tech-stack.md) · Layout: [docs/file-structure.md](docs/file-structure.md)
 

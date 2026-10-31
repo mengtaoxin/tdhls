@@ -31,16 +31,15 @@ No new test required for docs, comments, formatting, or mechanical moves (still 
 
 ## 4. Tests
 
-Run the focused spec during Red/Green. Before finishing a behavior change, run the full unit suite (`npm run test:unit -- --run`). Add or run e2e only for user-visible integration smoke.
+Run the focused spec during Red/Green (`npm run test -- path/to/spec.ts` or `npm run test:watch`). Before finishing a behavior change, run the full unit suite (`npm run test`). Add or run e2e only for user-visible integration smoke.
 
-## 5. Format and check
+## 5. Format and verify
 
-1. Write: `npm run fmt && npm run lint && npm run type-check`.
-2. Confirm check-only is clean (`npm run fmt:check && npm run lint && npm run type-check`).
+Run `npm run format` (and `npm run lint:fix` when lint autofix is needed) when the tree needs it, then `npm run verify` once at the end. Commands: [commands.md](commands.md).
 
 ## Done when
 
 - Structure matches [file-structure.md](file-structure.md).
 - Behavior changes went through Red → Green.
-- Full unit suite is green; format / lint / type-check check-only is clean.
+- `npm run verify` passes.
 - i18n and docs are updated when they apply.

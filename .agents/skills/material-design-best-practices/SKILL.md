@@ -9,7 +9,7 @@ description: >-
 license: MIT
 metadata:
   author: mengtaoxin
-  version: "1.2.0"
+  version: '1.2.0'
   docs: https://m3.material.io/
 ---
 

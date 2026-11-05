@@ -8,6 +8,8 @@ declare module '@tanstack/react-router' {
     streamUrl?: string;
     /** URL after the settings URL function; the one actually played. */
     playbackUrl?: string;
+    /** Bumped so "Back to live" can reload this route and remount the player. */
+    playbackNonce?: number;
   }
 }
 

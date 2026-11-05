@@ -140,11 +140,10 @@ describe('WatchPage', () => {
     expect(screen.getByRole('button', { name: 'Play' })).toBeInTheDocument();
   });
 
-  it('plays live with the delay from settings and seeks back to live on demand', async () => {
-    const user = userEvent.setup();
+  it('plays live with the delay from settings and shows Back to live when far behind', async () => {
     localStorage.setItem(LIVE_DELAY_KEY, '30');
     usePlayerPrefsStore.setState(resolvePlayerPrefs());
-    const player = mockPlayer({ isLive: true, latency: 90 });
+    mockPlayer({ isLive: true, latency: 90 });
     await renderWatch();
 
     expect(useHlsPlayerMock).toHaveBeenLastCalledWith(expect.anything(), STREAM, 30);
@@ -152,8 +151,6 @@ describe('WatchPage', () => {
 
     act(() => usePlayerPrefsStore.getState().setLiveDelay(10));
     expect(useHlsPlayerMock).toHaveBeenLastCalledWith(expect.anything(), STREAM, 10);
-
-    await user.click(screen.getByRole('button', { name: 'Back to live' }));
-    expect(player.seekToLiveSync).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole('button', { name: 'Back to live' })).toBeInTheDocument();
   });
 });

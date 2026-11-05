@@ -5,7 +5,6 @@ Personal HLS player SPA: paste an `.m3u8` URL and watch in the browser (VOD and 
 ## Rules
 
 - Changing code (structure, TDD, tests, format/check, i18n): [docs/change-code-steps.md](docs/change-code-steps.md).
-- Skills: [`.cursor/rules/skills-intro.mdc`](.cursor/rules/skills-intro.mdc).
 
 ## Read when
 

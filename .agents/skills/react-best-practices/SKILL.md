@@ -12,7 +12,7 @@ description: >-
 license: MIT
 metadata:
   author: mengtaoxin
-  version: "2.0.0"
+  version: '2.0.0'
   docs: https://react.dev/
 ---
 

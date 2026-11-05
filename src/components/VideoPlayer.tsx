@@ -10,7 +10,7 @@ import { useHlsPlayer } from '@/hooks/useHlsPlayer';
 import { useVideoControls } from '@/hooks/useVideoControls';
 import { usePlayerPrefsStore } from '@/stores/playerPrefs';
 
-export function VideoPlayer({ url }: { url: string }) {
+export function VideoPlayer({ url, onBackToLive }: { url: string; onBackToLive: () => void }) {
   const { t } = useTranslation();
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -87,7 +87,7 @@ export function VideoPlayer({ url }: { url: string }) {
             isLive={player.isLive}
             latency={player.latency}
             liveDelaySec={liveDelaySec}
-            onBackToLive={player.seekToLiveSync}
+            onBackToLive={onBackToLive}
           />
         </Box>
       </Box>

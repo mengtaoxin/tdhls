@@ -15,7 +15,7 @@ tdhls is a React SPA (Vite) at the repo root — no separate `api/` or `web/` ap
 | UI            | MUI 9 + Emotion + Material Icons                |
 | HLS           | hls.js (MSE) with native HLS fallback           |
 | Lint / format | oxlint + oxfmt (`@mengtaoxin/oxc-config`)       |
-| Unit tests    | Vitest + Testing Library + happy-dom            |
+| Unit tests    | Vitest + Testing Library + jsdom                |
 | Coverage      | `@vitest/coverage-v8` (`npm run test:coverage`) |
 | E2E           | Playwright                                      |
 | PWA           | vite-plugin-pwa (manifest + app-shell SW)       |

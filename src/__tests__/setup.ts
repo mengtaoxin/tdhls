@@ -33,4 +33,23 @@ beforeAll(() => {
       dispatchEvent: () => false,
     }),
   });
+
+  // jsdom stubs HTMLMediaElement.play/pause as no-ops that return undefined.
+  const pausedByElement = new WeakMap<HTMLMediaElement, boolean>();
+  Object.defineProperty(HTMLMediaElement.prototype, 'paused', {
+    configurable: true,
+    enumerable: true,
+    get() {
+      return pausedByElement.get(this) ?? true;
+    },
+  });
+  HTMLMediaElement.prototype.play = function play() {
+    pausedByElement.set(this, false);
+    this.dispatchEvent(new Event('play'));
+    return Promise.resolve();
+  };
+  HTMLMediaElement.prototype.pause = function pause() {
+    pausedByElement.set(this, true);
+    this.dispatchEvent(new Event('pause'));
+  };
 });

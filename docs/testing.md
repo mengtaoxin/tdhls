@@ -12,6 +12,6 @@ Put a new unit spec next to the module under `__tests__/`. Use React Testing Lib
 
 Route unit specs live under `src/routes/__tests__/`. The TanStack Router plugin ignores `*.spec.*` / `*.test.*` (`routeFileIgnorePattern` in `vite.config.ts`) so those files are not treated as routes.
 
-HLS playback depends on Media Source Extensions, which happy-dom does not provide. Keep hls.js wiring behind a thin adapter so logic can be unit-tested with a fake, and cover real playback in e2e.
+HLS playback depends on Media Source Extensions, which jsdom does not provide. Keep hls.js wiring behind a thin adapter so logic can be unit-tested with a fake, and cover real playback in e2e.
 
 When to write and run tests: [change-code-steps.md](change-code-steps.md). Commands: [commands.md](commands.md).

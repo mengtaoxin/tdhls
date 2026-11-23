@@ -61,3 +61,7 @@ Type-check + Vite production build → `dist/`.
 | `npm run test:e2e -- --project chromium -- path/to/spec.ts` | One e2e file                                        |
 
 E2E defaults include chromium, firefox, and webkit; always pass `--project` when you want a subset.
+
+## Deploy
+
+Production hosting on Vercel via GitHub Actions: see [deployment.md](./deployment.md).

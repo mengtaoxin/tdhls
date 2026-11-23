@@ -38,3 +38,6 @@ playwright-report/
 .cursor/*
 !.cursor/rules/
 !.cursor/rules/**
+
+# Vercel CLI (vercel pull / link)
+.vercel

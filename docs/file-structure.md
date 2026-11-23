@@ -7,7 +7,9 @@ Repository layout for tdhls. Changing code: [change-code-steps.md](change-code-s
 ├── AGENTS.md
 ├── .agents/skills/               Installed agent skills (pinned in skills-lock.json)
 ├── .cursor/rules/                Shared Cursor rules (path-scoped)
-├── docs/                         Project docs (this file, commands, conventions, …)
+├── .github/workflows/            CI/CD (Vercel production deploy)
+├── vercel.json                   Vercel Vite build/output + SPA rewrites
+├── docs/                         Project docs (deployment.md, this file, commands, conventions, …)
 ├── e2e/                          Playwright specs
 ├── public/                       Static assets (favicon / PWA icon)
 ├── src/

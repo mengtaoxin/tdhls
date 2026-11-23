@@ -53,4 +53,4 @@ Production builds register a service worker (`registerType: 'autoUpdate'`) and i
 
 ## Deploy
 
-`npm run build` outputs static files to `dist/`. `vercel.json` rewrites every path to `/index.html` so client-side routes work on reload.
+`npm run build` outputs static files to `dist/`. `vercel.json` sets the Vite preset (install/build/output) and rewrites every path to `/index.html` so client-side routes work on reload. Production publish: [deployment.md](deployment.md) (GitHub Actions + Vercel CLI).

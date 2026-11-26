@@ -6,7 +6,7 @@ Plays VOD and live streams. Live playback stays a chosen delay (10s / 30s / 60s 
 
 ## Requirements
 
-- Node.js `^22.18.0` or `^24.12.0` (see `package.json` `engines`)
+- Node.js 24 or newer (`>=24`, see `package.json` `engines`)
 - `NODE_AUTH_TOKEN` with `read:packages` to install `@mengtaoxin/oxc-config` from GitHub Packages
 
 ## Quick start

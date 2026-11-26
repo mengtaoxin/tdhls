@@ -5,7 +5,7 @@ Production will be published from **GitHub Actions** using the Vercel CLI. The a
 | Setting        | Value                                              |
 | -------------- | -------------------------------------------------- |
 | Framework      | Vite                                               |
-| Install        | `npm ci` (Node **24.x**, see `engines`)            |
+| Install        | `npm ci` (Node **24+**, see `engines`)             |
 | Build          | `npm run build` → `dist/`                          |
 | Hosting        | Static files + existing `vercel.json` SPA rewrites |
 | Production URL | `https://tdhls.smt.sh`                             |

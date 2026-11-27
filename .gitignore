@@ -1,4 +1,9 @@
-# Logs
+# --- OS / filesystem junk ---
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# --- Logs and temp files ---
 logs
 *.log
 npm-debug.log*
@@ -7,14 +12,16 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-.DS_Store
-dist
-dist-ssr
-coverage
-*.local
+# --- Environment and secrets ---
+.env
+.env.*
+!.env.example
+!.env.sample
+*.pem
+*.key
+*.p12
 
-# Editor directories and files
+# --- Editor / IDE ---
 .vscode/*
 !.vscode/extensions.json
 .idea
@@ -24,20 +31,30 @@ coverage
 *.sln
 *.sw?
 
+# --- Dependencies ---
+node_modules
+
+# --- Build output ---
+dist
+dist-ssr
+coverage
 *.tsbuildinfo
 
-# Vitest
-__screenshots__/
-
-# Vite
+# --- Vite ---
+*.local
 *.timestamp-*-*.mjs
 
+# --- Vitest ---
+__screenshots__/
+
+# --- Playwright ---
 test-results/
 playwright-report/
 
+# --- Cursor (keep shared rules) ---
 .cursor/*
 !.cursor/rules/
 !.cursor/rules/**
 
-# Vercel CLI (vercel pull / link)
+# --- Vercel CLI (vercel pull / link) ---
 .vercel
